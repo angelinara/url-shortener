@@ -1,0 +1,21 @@
+info:
+  name: create-short-url
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:7070/url
+  body:
+    type: json
+    data: |-
+      {
+        "longUrl": "http://www.foo.com/"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
