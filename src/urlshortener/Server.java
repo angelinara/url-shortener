@@ -1,29 +1,50 @@
 package urlshortener;
 
 import static spark.Spark.get;
-import static spark.Spark.post;
 import static spark.Spark.port;
+import static spark.Spark.post;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.tinylog.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.tinylog.Logger;
 
 public class Server {
     public static void main(String[] args) {
         port(7070);
         var gson = new Gson();
 
+        Map<String, Long> longToIdMap = new HashMap<>();
         Map<String, String> shortToLongMap = new HashMap<>();
 
         // POST accepts one parameter: the long url
         post("/url", (req, res) -> {
             JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
             Url u = new Url(payload.get("longUrl").getAsString());
+
+            var created = false;
+
+            // ensure long url is mapped to an id for
+            if (!longToIdMap.containsKey(u.getLongUrl())) {
+                longToIdMap.put(u.getLongUrl(), Id.getRandom());
+                created = true;
+            }
+
+            // convert id to short url
+            long id = longToIdMap.get(u.getLongUrl());
+            u.toShortUrl(id);
+
+            // map short url to long url
             shortToLongMap.put(u.getShortUrl(), u.getLongUrl());
-            Logger.info("Created short url {}", u.getShortUrl());
+
+            if (created) {
+                Logger.info("Created short url {}", u.getShortUrl());
+            } else {
+                Logger.info("Reused short url {}", u.getShortUrl());
+            }
             res.type("application/json");
             return u;
         }, gson::toJson);
@@ -41,7 +62,5 @@ public class Server {
                 return Map.of("error", "url not found");
             }
         }, gson::toJson);
-
     }
-
 }

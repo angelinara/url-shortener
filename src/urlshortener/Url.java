@@ -1,7 +1,8 @@
 package urlshortener;
 
 public class Url {
-    private String longUrl;
+    private final String longUrl;
+
     private String shortUrl;
 
     public Url(String longUrl) {
@@ -9,7 +10,6 @@ public class Url {
         if (longUrl.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        this.shortUrl = "abc123"; // FIXME: remove hardcoded url
     }
 
     public String getLongUrl() {
@@ -18,6 +18,11 @@ public class Url {
 
     public String getShortUrl() {
         return shortUrl;
+    }
+
+    public void toShortUrl(long id) {
+        // TODO: remove hardcoded id, implement id to short url conversion
+        shortUrl = "T1W";
     }
 
     @Override
