@@ -20,9 +20,21 @@ public class Url {
         return shortUrl;
     }
 
+    /**
+     * Use base 62 is a way of generating 62 characters for encoding.
+     * The mappings are: 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z,
+     * where 'a' stands for 10, 'Z' stands for 61, etc.
+     */
     public void toShortUrl(long id) {
-        // TODO: remove hardcoded id, implement id to short url conversion
-        shortUrl = "T1W";
+        final String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder sb = new StringBuilder();
+        while (id > 0) {
+            int remainder = (int) (id % 62);
+            char c = chars.charAt(remainder);
+            sb.append(c);
+            id /= 62;
+        }
+        shortUrl = sb.toString();
     }
 
     @Override

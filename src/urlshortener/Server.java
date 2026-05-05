@@ -27,17 +27,20 @@ public class Server {
 
             var created = false;
 
-            // ensure long url is mapped to an id for
+            // ensure long url is mapped to a unique id
             if (!longToIdMap.containsKey(u.getLongUrl())) {
                 longToIdMap.put(u.getLongUrl(), Id.getRandom());
                 created = true;
             }
 
             // convert id to short url
+            // id generation is non-deterministic and unrelated to long urls provided by clients
+            // so mapping from long url to id is required to connect long url to short url
             long id = longToIdMap.get(u.getLongUrl());
             u.toShortUrl(id);
 
             // map short url to long url
+            // to return long url when client provides short url
             shortToLongMap.put(u.getShortUrl(), u.getLongUrl());
 
             if (created) {
