@@ -23,21 +23,24 @@ public class Server {
         // POST accepts one parameter: the long url
         post("/url", (req, res) -> {
             JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
-            Url u = new Url(payload.get("longUrl").getAsString());
+            String longUrl = payload.get("longUrl").getAsString();
 
-            var created = false;
+            boolean created = false;
 
             // ensure long url is mapped to a unique id
-            if (!longToIdMap.containsKey(u.getLongUrl())) {
-                longToIdMap.put(u.getLongUrl(), Id.getRandom());
+            if (!longToIdMap.containsKey(longUrl)) {
+                longToIdMap.put(longUrl, Id.getRandom());
                 created = true;
             }
 
             // convert id to short url
-            // id generation is non-deterministic and unrelated to long urls provided by clients
-            // so mapping from long url to id is required to connect long url to short url
-            long id = longToIdMap.get(u.getLongUrl());
-            u.toShortUrl(id);
+            // id generation is non-deterministic and unrelated to long urls provided by
+            // clients so mapping from long url to id is required to connect long url to
+            // short url
+            long id = longToIdMap.get(longUrl);
+            String shortUrl = Url.toShortUrl(id);
+
+            Url u = new Url(longUrl, shortUrl);
 
             // map short url to long url
             // to return long url when client provides short url
@@ -52,13 +55,16 @@ public class Server {
             return u;
         }, gson::toJson);
 
-        // GET redirects short url to long url
+        // GET returns long url from the short url
+        // TODO: redirect to long url instead of returning it
         get("/url/:shortUrl", (req, res) -> {
             String shortUrl = req.params("shortUrl");
             res.type("application/json");
             if (shortToLongMap.containsKey(shortUrl)) {
                 Logger.info("Fetch shortUrl={} found=true", shortUrl);
-                return shortToLongMap.get(shortUrl);
+                String longUrl = shortToLongMap.get(shortUrl);
+                Url u = new Url(longUrl, shortUrl);
+                return u;
             } else {
                 Logger.warn("Fetch shortUrl={} found=false", shortUrl);
                 res.status(404);

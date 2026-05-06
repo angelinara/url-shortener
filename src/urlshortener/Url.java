@@ -2,12 +2,15 @@ package urlshortener;
 
 public class Url {
     private final String longUrl;
+    private final String shortUrl;
 
-    private String shortUrl;
-
-    public Url(String longUrl) {
+    public Url(String longUrl, String shortUrl) {
         this.longUrl = longUrl;
         if (longUrl.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.shortUrl = shortUrl;
+        if (shortUrl.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -25,7 +28,7 @@ public class Url {
      * The mappings are: 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z,
      * where 'a' stands for 10, 'Z' stands for 61, etc.
      */
-    public void toShortUrl(long id) {
+    public static String toShortUrl(long id) {
         if (id < Id.MIN_LEN) {
             throw new IllegalArgumentException("small id");
         }
@@ -37,7 +40,7 @@ public class Url {
             sb.append(c);
             id /= 62;
         }
-        shortUrl = sb.toString();
+        return sb.toString();
     }
 
     @Override
