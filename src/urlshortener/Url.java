@@ -26,6 +26,9 @@ public class Url {
      * where 'a' stands for 10, 'Z' stands for 61, etc.
      */
     public void toShortUrl(long id) {
+        if (id < Id.MIN_LEN) {
+            throw new IllegalArgumentException("small id");
+        }
         final String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder sb = new StringBuilder();
         while (id > 0) {
@@ -40,8 +43,8 @@ public class Url {
     @Override
     public String toString() {
         return "Url{" +
-                "longUrl:" + longUrl +
-                "shortUrl:" + shortUrl +
+                "longUrl='" + longUrl + '\'' +
+                ", shortUrl='" + shortUrl + '\'' +
                 '}';
     }
 }
