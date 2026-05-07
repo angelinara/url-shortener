@@ -28,7 +28,6 @@ install:
         "com/google/code/gson/gson/2.13.1/gson-2.13.1.jar" \
         "org/tinylog/tinylog-api/2.7.0/tinylog-api-2.7.0.jar" \
         "org/tinylog/tinylog-impl/2.7.0/tinylog-impl-2.7.0.jar" \
-        "org/sqids/sqids/0.1.0/sqids-0.1.0.jar" \
     ; do \
         curl --fail --remote-name "https://repo1.maven.org/maven2/$path"; \
     done
