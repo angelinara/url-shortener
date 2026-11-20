@@ -46,10 +46,8 @@ public class Server {
             // to return long url when client provides short url
             shortToLongMap.put(u.getShortUrl(), u.getLongUrl());
 
-            if (created) {
-                Logger.info("Created short url {}", u.getShortUrl());
-            } else {
-                Logger.info("Reused short url {}", u.getShortUrl());
+            if (Logger.isInfoEnabled()) {
+                Logger.info("{} short url {}", created ? "Created" : "Reused", u.getShortUrl());
             }
             res.type("application/json");
             return u;
@@ -63,8 +61,7 @@ public class Server {
             if (shortToLongMap.containsKey(shortUrl)) {
                 Logger.info("Fetch shortUrl={} found=true", shortUrl);
                 String longUrl = shortToLongMap.get(shortUrl);
-                Url u = new Url(longUrl, shortUrl);
-                return u;
+                return new Url(longUrl, shortUrl);
             } else {
                 Logger.warn("Fetch shortUrl={} found=false", shortUrl);
                 res.status(404);

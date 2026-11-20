@@ -9,9 +9,13 @@ default:
 
 # Install dependencies
 [group('setup')]
-install:
+install: githooks
     @echo "{{RED}}{{BOLD}}Installing dependencies...{{RESET}}"
     # @brew install java ant jdtls jq
+    @brew install java
+    @brew install pmd
+    @brew install betterleaks
+    @brew install jq
     @rm -rf lib/
     @mkdir lib
     @cd lib/ && for path in \
@@ -41,6 +45,19 @@ install:
     ; do \
         curl --fail --remote-name "https://repo1.maven.org/maven2/$path"; \
     done
+
+# Install git hooks from hooks/
+[group('setup')]
+githooks:
+    @echo "{{RED}}{{BOLD}}Installing git hooks...{{RESET}}"
+    @chmod +x hooks/*
+    @git config core.hooksPath hooks
+
+# Lint sources with PMD
+[group('dev')]
+lint:
+    @echo "{{RED}}{{BOLD}}Linting...{{RESET}}"
+    @pmd check --dir src --rulesets rulesets/java/quickstart.xml --format text --no-progress --no-cache
 
 # Build project
 [group('dev')]

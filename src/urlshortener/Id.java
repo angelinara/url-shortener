@@ -1,8 +1,11 @@
 package urlshortener;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Id {
+public final class Id {
     public static final long MIN_LEN = 10_000L;
+
+    private Id() {
+    }
     
     // thread-safe
     static long getRandom() {
