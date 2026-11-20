@@ -67,7 +67,7 @@ build:
     @mkdir build
     @find src -type f -name "*.java" > sources
     @javac -d build/ -cp .:lib/* @sources -Xlint:unchecked
-    @find test -type f -name "*Test.java" > testsources
+    @find test -type f -name "*Test.java" > testsources 2>/dev/null || true
     @if [ -s testsources ]; then \
         javac -d build/ -cp .:lib/*:build/ @testsources -Xlint:unchecked; \
     fi
@@ -78,13 +78,13 @@ build:
 test: build
     @echo "{{RED}}{{BOLD}}Running tests...{{RESET}}"
     @java -ea -cp .:lib/*:build/ org.junit.platform.console.ConsoleLauncher execute \
-        --scan-classpath
+        --scan-classpath --disable-banner --details=summary
 
-# Run the server
+# Run a main class, e.g. `just run urlshortener.Server`
 [group('dev')]
-run: build
-    @echo "{{RED}}{{BOLD}}Running the server...{{RESET}}"
-    @java -ea -cp .:lib/*:build/ urlshortener.Server
+run main='urlshortener.Server': build
+    @echo "{{RED}}{{BOLD}}Running {{main}}...{{RESET}}"
+    @java -ea -cp .:lib/*:build/ {{main}}
 
 # Make requests to server
 [group('dev')]
